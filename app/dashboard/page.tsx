@@ -1,9 +1,17 @@
+import { auth } from "@clerk/nextjs";
+import Dropzone from "@/components/Dropzone";
 
 
 function Dashboard() {
+  const {userId} = auth();
+
+
+
   return (
-    <div>page</div>
-  )
+    <div>
+      <Dropzone />
+    </div>
+    );
 }
 
 export default Dashboard;
