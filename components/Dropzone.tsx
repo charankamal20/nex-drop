@@ -82,43 +82,45 @@ function Dropzone() {
   }
 
   return (
-    <DropzoneComponent
-      minSize={0}
-      maxSize={maxSize}
-      onDrop={onDrop}
-    >
-      {({
-        getRootProps,
-        getInputProps,
-        isDragActive,
-        isDragReject,
-        fileRejections,
-      }) => {
-        const isFileTooLarge =
-          fileRejections.length > 0 && fileRejections[0].file.size > maxSize;
-        return (
-          <section className="m-4">
-            <div
-              className={cn(
-                "w-full w-max-4xl h-52 flex bg-slate-100 transition-all dark:bg-slate-800 justify-center items-center p-5 border border-dashed rounded-lg text-center",
-                isDragActive
-                  ? "bg-[#161a20] dark:bg-[#035FFE] text-white animate-pulse"
-                  : "border-gray-300"
-              )}
-              {...getRootProps()}
-            >
-              <input {...getInputProps()} />
-              {!isDragActive && "Click here or drop a file to upload!"}
-              {isDragActive && !isDragReject && "Drop it like it's hot!"}
-              {isDragReject && "File type not accepted, sorry!"}
-              {isFileTooLarge && (
-                <div className="text-danger mt-2">File is too large.</div>
-              )}
-            </div>
-          </section>
-        );
-      }}
-    </DropzoneComponent>
+    <div className="mt-8 mb-8 mx-auto max-w-7xl">
+      <DropzoneComponent
+        minSize={0}
+        maxSize={maxSize}
+        onDrop={onDrop}
+      >
+        {({
+          getRootProps,
+          getInputProps,
+          isDragActive,
+          isDragReject,
+          fileRejections,
+        }) => {
+          const isFileTooLarge =
+            fileRejections.length > 0 && fileRejections[0].file.size > maxSize;
+          return (
+            <section className="">
+              <div
+                className={cn(
+                  "w-full w-max-4xl h-52 flex bg-slate-100 transition-all dark:bg-slate-800 justify-center items-center p-5 border border-dashed rounded-lg text-center",
+                  isDragActive
+                    ? "bg-[#161a20] dark:bg-[#035FFE] text-white animate-pulse"
+                    : "border-gray-300"
+                )}
+                {...getRootProps()}
+              >
+                <input {...getInputProps()} />
+                {!isDragActive && "Click here or drop a file to upload!"}
+                {isDragActive && !isDragReject && "Drop it like it's hot!"}
+                {isDragReject && "File type not accepted, sorry!"}
+                {isFileTooLarge && (
+                  <div className="text-danger mt-2">File is too large.</div>
+                )}
+              </div>
+            </section>
+          );
+        }}
+      </DropzoneComponent>
+    </div>
   );
 }
 

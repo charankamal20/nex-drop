@@ -47,7 +47,7 @@ function TableWrapper({ skeletonFiles }: { skeletonFiles: FileType[] }) {
 
   if (docs?.docs.length === undefined)
     return (
-      <div className="flex flex-col">
+      <div className="mx-auto flex flex-col max-w-7xl">
         <Button variant={"outline"} className="ml-auto w-36 h-10 mb-5">
           <Skeleton className="w-full h-5" />
         </Button>
@@ -65,7 +65,7 @@ function TableWrapper({ skeletonFiles }: { skeletonFiles: FileType[] }) {
           ))}
 
           {skeletonFiles.length === 0 && (
-            <div>
+            <div className="flex items-center space-x-4 p-5 w-full">
               <Skeleton className="h-12 w-12" />
               <Skeleton className="h-12 w-full" />
             </div>
@@ -75,12 +75,16 @@ function TableWrapper({ skeletonFiles }: { skeletonFiles: FileType[] }) {
     );
 
   return (
-    <div className="flex flex-col space-y-5 pb-10">
-      <Button onClick={() => setSort(sort === "desc" ? "asc" : "desc")}
-        className="ml-auto w-fit"
+    <div className="mx-auto  max-w-7xl flex flex-col space-y-5 pb-10">
+      <div className="w-full flex justify-between items-center">
+        <h1 className="font-bold">All Files</h1>
+        <Button
+          onClick={() => setSort(sort === "desc" ? "asc" : "desc")}
+          className="ml-auto w-fit"
         >
-        Sort By {sort === "desc" ? "Newest" : "Oldest"}
-      </Button>
+          Sort By {sort === "desc" ? "Newest" : "Oldest"}
+        </Button>
+      </div>
 
       <DataTable columns={columns} data={initialFiles} />
     </div>

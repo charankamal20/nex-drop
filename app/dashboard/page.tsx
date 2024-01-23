@@ -23,9 +23,6 @@ async function Dashboard() {
     <div className="border-t">
       <Dropzone />
       <section className="container space-y-5">
-        <h1 className="font-bold">
-          All Files
-        </h1>
         <div>
           {/* // * Table Wrapper */}
           <TableWrapper
