@@ -31,7 +31,7 @@ function TableWrapper({ skeletonFiles }: { skeletonFiles: FileType[] }) {
 
   useEffect(() => {
     if (!docs) return;
-    console.log("TableWrapper.tsx -> user.id", user?.id);
+
     const files: FileType[] = docs.docs.map((doc) => ({
       id: doc.id,
       filename: doc.data().fileName || doc.id,

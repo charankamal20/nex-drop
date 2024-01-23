@@ -42,9 +42,8 @@ function Dropzone() {
       title:"Uploading File..."
     })
 
-    let docRef;
     try {
-      docRef = await addDoc(collection(db, "users", user.id, "files"), {
+      const docRef = await addDoc(collection(db, "users", user.id, "files"), {
         userID: user.id,
         userName: user.fullName,
         profileImage: user.imageUrl,
@@ -53,23 +52,9 @@ function Dropzone() {
         fileSize: selectedFile.size,
         fileType: selectedFile.type,
       })
-    }
-    catch(error) {
-      toast({
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem with your request.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-      setLoading(false);
-      return;
-    }
 
-    // todo - add rollback code here
-    // * watch saas video for this
+      const imageRef = ref(storage, `users/${user.id}/files/${docRef.id}`);
 
-    const imageRef = ref(storage, `users/${user.id}/files/${docRef.id}`);
-
-    try {
       uploadBytes(imageRef, selectedFile).then(async (snapshot) => {
         const downloadURL = await getDownloadURL(imageRef);
         await updateDoc(doc(db, "users", user.id, "files", docRef.id), {
@@ -87,8 +72,12 @@ function Dropzone() {
         description: "There was a problem with your request.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
+      setLoading(false);
+      return;
     }
 
+    // todo - add rollback code here
+    // * watch saas video for this
     setLoading(false);
   }
 
