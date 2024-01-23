@@ -7,13 +7,15 @@ import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/fi
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
 import DropzoneComponent from "react-dropzone";
+import { useToast } from "./ui/use-toast";
+import { ToastAction } from "./ui/toast";
 
 
 function Dropzone() {
 
   const [loading, setLoading] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
-
+  const {toast} = useToast();
   // 20 MB
   const maxSize = 20 * 1024 * 1024;
 
@@ -36,26 +38,56 @@ function Dropzone() {
 
     setLoading(true);
 
-    const docRef = await addDoc(collection(db, "users", user.id, "files"), {
-      userID: user.id,
-      userName: user.fullName,
-      profileImage: user.imageUrl,
-      timeStamp: serverTimestamp(),
-      fileName: selectedFile.name,
-      fileSize: selectedFile.size,
-      fileType: selectedFile.type,
+    toast({
+      title:"Uploading File..."
     })
+
+    let docRef;
+    try {
+      docRef = await addDoc(collection(db, "users", user.id, "files"), {
+        userID: user.id,
+        userName: user.fullName,
+        profileImage: user.imageUrl,
+        timeStamp: serverTimestamp(),
+        fileName: selectedFile.name,
+        fileSize: selectedFile.size,
+        fileType: selectedFile.type,
+      })
+    }
+    catch(error) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setLoading(false);
+      return;
+    }
 
     // todo - add rollback code here
     // * watch saas video for this
 
     const imageRef = ref(storage, `users/${user.id}/files/${docRef.id}`);
-    uploadBytes(imageRef, selectedFile).then(async (snapshot) => {
-      const downloadURL = await getDownloadURL(imageRef);
-      await updateDoc(doc(db, "users", user.id, "files", docRef.id), {
-        downloadURL: downloadURL,
-      })
-    });
+
+    try {
+      uploadBytes(imageRef, selectedFile).then(async (snapshot) => {
+        const downloadURL = await getDownloadURL(imageRef);
+        await updateDoc(doc(db, "users", user.id, "files", docRef.id), {
+          downloadURL: downloadURL,
+        })
+      }).then(() => {
+        toast({
+          title: "File Uploaded Successfully.",
+        });
+      });
+    }
+    catch(error) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
 
     setLoading(false);
   }

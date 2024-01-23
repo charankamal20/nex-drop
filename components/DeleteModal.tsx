@@ -12,12 +12,14 @@ import { useAppStore } from "@/store/store";
 import { useUser } from "@clerk/nextjs";
 import { deleteDoc, doc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
+import { ToastAction } from "./ui/toast";
+import { useToast } from "./ui/use-toast";
 
 
 export function DeleteModal() {
 
     const {user} = useUser();
-
+    const { toast } = useToast();
 
     const [isDeleteModalOpen, setDeleteModalOpen, fileId, setFileId] = useAppStore((state) => [
         state.isDeleteModalOpen,
@@ -29,11 +31,17 @@ export function DeleteModal() {
     async function deleteFile() {
         if(!user || !fileId) return;
 
+        toast({
+          title: "Deleting the file...",
+        });
+
         try {
             const fileref = ref(storage, `users/${user.id}/files/${fileId}`);
             await deleteObject(fileref).then(() => {
                 deleteDoc(doc(db, "users", user.id, "files", fileId)).then(() => {
-                    console.log("DELETED");
+                    toast({
+                      title: "File Deleted Successfully",
+                    })
                 });
             }).finally(() => {
                 setDeleteModalOpen(false);
@@ -42,6 +50,12 @@ export function DeleteModal() {
         }
         catch (error) {
             console.log(error);
+            setDeleteModalOpen(false);
+            toast({
+              title: "Uh oh! Something went wrong.",
+              description: "There was a problem with your request.",
+              action: <ToastAction altText="Try again">Try again</ToastAction>,
+            });
         }
     }
 
@@ -68,6 +82,7 @@ export function DeleteModal() {
           </Button>
           <Button
           type="submit"
+          variant={"destructive"}
             size={"sm"}
             className="px-3 flex-1"
             onClick={() => deleteFile()}

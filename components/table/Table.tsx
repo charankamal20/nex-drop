@@ -21,6 +21,7 @@ import { PencilIcon, TrashIcon } from "lucide-react";
 import { useAppStore } from "@/store/store";
 import { set } from "firebase/database";
 import { DeleteModal } from "../DeleteModal";
+import RenameModal from "../RenameModal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -89,6 +90,7 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 <DeleteModal />
+                <RenameModal />
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {cell.column.id === "timestamp" ? (
